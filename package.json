@@ -1,0 +1,42 @@
+{
+  "name": "txn-id",
+  "version": "1.0.0",
+  "description": "Functions to generate and validate compact, unique, and human-readable transaction IDs using a reference string and a timestamp.",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "build": "bun run lint:fix && rm -rf dist && bun esbuild.mjs ./src/index.ts",
+    "build:minify": "bun run lint:fix && rm -rf dist && bun --minify esbuild.mjs ./src/index.ts ",
+    "lint": "eslint . --ext .ts && tsc --noEmit",
+    "lint:fix": "eslint . --ext .ts --fix && tsc --noEmit",
+    "test": "ENVIRONMENT=test bun test --coverage"
+  },
+  "keywords": [
+    "financial",
+    "transaction",
+    "identifier"
+  ],
+  "author": "dbryar@gmail.com",
+  "module": "dist/index.js",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^20.17.9",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "esbuild": "^0.20.2",
+    "eslint": "^8.57.1",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "prettier": "^2.8.8",
+    "typescript": "^5.7.2",
+    "uuid": "^11.0.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "type": "module"
+}

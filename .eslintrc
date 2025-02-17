@@ -1,0 +1,67 @@
+{
+  "root": true,
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
+    // "google",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["tsconfig.json"],
+    "sourceType": "module"
+  },
+  "ignorePatterns": [
+    "esbuild.mjs",
+    "__test__/distribution.test.ts",
+    "/dist/**/*" // Ignore built files.
+  ],
+  "plugins": ["@typescript-eslint", "import", "simple-import-sort"],
+  "rules": {
+    "max-len": "off",
+    "quotes": ["error", "double", { "avoidEscape": true }],
+    "import/no-unresolved": 0,
+
+    // indentation fix for ternery
+    "indent": [
+      "warn",
+      2,
+      {
+        "SwitchCase": 1,
+        "offsetTernaryExpressions": true
+      }
+    ],
+
+    // line breaks
+    "linebreak-style": ["error", "unix"],
+    "semi": ["error", "always"],
+
+    // tidy up imports and exports
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn",
+    "import/newline-after-import": "warn",
+    "import/no-duplicates": "error"
+  },
+  "overrides": [
+    {
+      "files": ["*.spec.ts", "*.test.ts"],
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["index.ts"],
+      "rules": {
+        "simple-import-sort/imports": "warn",
+        "simple-import-sort/exports": "off"
+      }
+    }
+  ]
+}
