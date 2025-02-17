@@ -1,5 +1,8 @@
+import { Config } from "../config";
+import { Constants } from "../constants";
 import { crockfordDecode } from "../crockford";
 import { generateTxnId } from "../generateTxnId";
+import { validateTxnId } from "../validateTxnId";
 
 describe("generateTxnId", () => {
   test("generates a string with expected format", () => {
@@ -21,6 +24,22 @@ describe("generateTxnId", () => {
     });
   });
 
+  test("generates IDs with consistent increasing timestamp", () => {
+    const variance = 3600000 * 24 * 7;
+    const past = Date.now() - variance * 100;
+    const results = Array.from({ length: 100 }, (_, i) => {
+      const pastTime = past + i * variance;
+      return generateTxnId(undefined, pastTime);
+    });
+
+    let lastTimestamp = past - variance;
+    results.forEach((result) => {
+      const { timestamp } = validateTxnId(result);
+      expect(timestamp).toBeCloseTo(lastTimestamp + variance, -2);
+      lastTimestamp = timestamp;
+    });
+  });
+
   test("generates valid checksum", () => {
     const result = generateTxnId();
     const checksum = result.slice(-1);
@@ -31,7 +50,25 @@ describe("generateTxnId", () => {
     const result = generateTxnId();
     expect(() => {
       const withoutChecksum = result.slice(0, -1);
-      crockfordDecode(withoutChecksum, 8);
+      crockfordDecode(withoutChecksum);
     }).not.toThrow();
+  });
+
+  test("generates IDs with consistent length once compression threshold is reached for reference length", () => {
+    const referenceOf = (length: number) =>
+      Array.from({ length }, (_, i) => Constants.CROCKFORD[i]).join("");
+    let reference = referenceOf(6);
+    while (reference.length < Constants.CROCKFORD.length) {
+      const txnId = generateTxnId(reference);
+      expect(txnId.length).toBeLessThanOrEqual(Config.MAX_ENCODED_LENGTH + Config.CHECKSUM_BYTES);
+      reference = referenceOf(reference.length + 1);
+    }
+  });
+
+  test("validate README.md", () => {
+    const reference = "Order12345";
+    const timestamp = new Date("2025-02-17T12:34:56.789Z").getTime();
+    const result = generateTxnId(reference, timestamp);
+    expect(result).toBe("06AH7SWCJM04YWK4CNS32CHK6GTGM");
   });
 });

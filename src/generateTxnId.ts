@@ -14,11 +14,13 @@ import { bufferTimestamp } from "./timestamp";
  */
 export function generateTxnId(reference?: string, timestamp = Date.now()): string {
   const data =
-    reference ?? Math.random().toString(36).substring(2, 10).replace(/\W/g, "").padEnd(8, "0");
+    reference ??
+    (reference === null
+      ? "null"
+      : Math.random().toString(36).substring(2, 10).replace(/\W/g, "").padEnd(8, "0"));
   const tsBytes = bufferTimestamp(timestamp);
   const dataBytes = bufferReference(data);
-
-  const combined = Buffer.concat([tsBytes, dataBytes]);
+  const combined = new Uint8Array([...tsBytes, ...dataBytes]);
   const encoded = crockfordEncode(combined);
 
   const checksum = computeChecksum(encoded);

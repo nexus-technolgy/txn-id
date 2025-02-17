@@ -1,3 +1,5 @@
+import { v4 } from "uuid";
+
 import { Constants } from "../constants";
 import { bufferReference, unbufferReference } from "../reference";
 
@@ -13,7 +15,7 @@ describe("bufferReference", () => {
   });
 
   test("converts UUID format correctly", () => {
-    const uuid = crypto.randomUUID();
+    const uuid = v4();
     const result = bufferReference(uuid);
     expect(result.length).toBe(Constants.UUID_BUFFER_LENGTH);
     expect(Buffer.from(result).toString("hex")).toBe(uuid.replace(/-/g, ""));
@@ -54,9 +56,10 @@ describe("unbufferReference", () => {
   });
 
   test("converts valid UUID buffer back to UUID format", () => {
-    const uuidBuffer = new Uint8Array(Buffer.from("123e4567e89b12d3a456426614174000", "hex"));
+    const uuid = v4();
+    const uuidBuffer = new Uint8Array(Buffer.from(uuid.replace(/-/g, ""), "hex"));
     const result = unbufferReference(uuidBuffer);
-    expect(result).toBe("123e4567-e89b-12d3-a456-426614174000");
+    expect(result).toBe(uuid);
   });
 
   test("falls back to UTF-8 for invalid UUID pattern", () => {

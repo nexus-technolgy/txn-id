@@ -21,9 +21,13 @@ export function validateTxnId(encoded: string): {
   const expectedChecksum = computeChecksum(encodedData);
   const valid = checksum === expectedChecksum;
 
-  const buffer = crockfordDecode(encodedData, (encodedData.length * 5) / 8);
-  const timestamp = unbufferTimestamp(buffer.slice(0, Config.TIMESTAMP_BYTES));
-  const reference = unbufferReference(buffer.slice(Config.TIMESTAMP_BYTES));
+  try {
+    const buffer = crockfordDecode(encodedData);
+    const timestamp = unbufferTimestamp(buffer.slice(0, Config.TIMESTAMP_BYTES));
+    const reference = unbufferReference(buffer.slice(Config.TIMESTAMP_BYTES));
 
-  return { timestamp, reference, valid };
+    return { timestamp, reference: reference === "null" ? "" : reference, valid };
+  } catch (error) {
+    return { timestamp: 0, reference: "", valid };
+  }
 }

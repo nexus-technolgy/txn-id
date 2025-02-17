@@ -10,7 +10,7 @@ export function bufferReference(reference: string): Uint8Array {
 
   // Handle UUIDs directly
   if (Constants.UUID_REGEX.test(reference)) {
-    return new Uint8Array(Buffer.from(reference.replace(/-/g, ""), "hex"));
+    return Buffer.from(reference.replace(/-/g, ""), "hex");
   }
 
   const maxStringBytes =
@@ -38,7 +38,6 @@ export function bufferReference(reference: string): Uint8Array {
         })
       );
     }
-    console.log("compressed length", compressed.length);
     result = Buffer.alloc(compressed.length + 1);
     result[0] = Constants.COMPRESSED_FLAG;
     compressed.copy(result, 1);
