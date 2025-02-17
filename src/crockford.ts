@@ -5,26 +5,45 @@ export function crockfordEncode(buffer: Uint8Array): string {
   if (buffer.length === 0) {
     return "";
   }
+  let bits = 0;
+  let value = 0;
+  let output = "";
 
-  let value = BigInt("0x" + Buffer.from(buffer).toString("hex"));
-  let encoded = "";
+  for (const byte of buffer) {
+    value = (value << 8) | byte;
+    bits += 8;
 
-  while (value > 0) {
-    encoded = Constants.CROCKFORD[Number(value % 32n)] + encoded;
-    value /= 32n;
+    while (bits >= 5) {
+      output += Constants.CROCKFORD[(value >>> (bits - 5)) & 31];
+      bits -= 5;
+    }
   }
 
-  return encoded.padStart(Math.ceil((buffer.length * 8) / 5), "0");
+  if (bits > 0) {
+    output += Constants.CROCKFORD[(value << (5 - bits)) & 31];
+  }
+
+  return output;
 }
 
 /** Convert a Crockford Base 32 string to a Uint8Array */
-export function crockfordDecode(encoded: string, expectedLength: number): Uint8Array {
-  let value = 0n;
+export function crockfordDecode(encoded: string): Uint8Array {
+  let bits = 0;
+  let value = 0;
+  const output = [];
 
   for (const char of encoded.toUpperCase()) {
-    value = value * 32n + BigInt(Constants.CHAR_MAP[char]);
+    if (!(char in Constants.CHAR_MAP)) {
+      throw new Error(`Invalid character found: ${char}`);
+    }
+    value = (value << 5) | Constants.CHAR_MAP[char];
+    bits += 5;
+
+    if (bits >= 8) {
+      output.push((value >>> (bits - 8)) & 255);
+      bits -= 8;
+    }
   }
 
-  const hex = value.toString(16).padStart(expectedLength * 2, "0");
-  return new Uint8Array(Buffer.from(hex, "hex"));
+  return new Uint8Array(output);
 }

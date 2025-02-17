@@ -1,23 +1,23 @@
-"use strict"
+"use strict";
 
-import esbuild from "esbuild"
+import esbuild from "esbuild";
 
-const isProduction = process.env.NODE_ENV == "production"
+const isMinified = process.argv.includes("--minify");
 
 class ESBuild {
   constructor() {
     this.config = {
       bundle: true,
-      sourcemap: !isProduction,
+      sourcemap: isMinified,
       platform: "node",
       target: ["node20"],
       legalComments: "none",
-      minify: isProduction,
+      minify: !isMinified,
       treeShaking: true,
       tsconfig: "tsconfig.json",
-    }
+    };
 
-    this.esbuild = esbuild
+    this.esbuild = esbuild;
   }
 
   build() {
@@ -28,11 +28,11 @@ class ESBuild {
         outdir: "dist",
       })
       .then(() => {
-        this.config.watch ? console.log("Watching...") : console.log("Bundling complete")
-      })
+        this.config.watch ? console.log("Watching...") : console.log("Bundling complete");
+      });
   }
 }
 
-console.log("Building...", process.argv.slice(2))
-const bundler = new ESBuild()
-bundler.build()
+console.log("Building...", process.argv.slice(2));
+const bundler = new ESBuild();
+bundler.build();

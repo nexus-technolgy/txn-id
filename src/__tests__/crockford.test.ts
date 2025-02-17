@@ -28,33 +28,27 @@ describe("crockford", () => {
 
   describe("crockfordDecode", () => {
     test("decodes empty string", () => {
-      const result = crockfordDecode("", 0);
+      const result = crockfordDecode("");
       expect(result.length).toBe(0);
     });
 
     test("decodes to expected length", () => {
-      const result = crockfordDecode("ZZ", 1);
+      const result = crockfordDecode("ZZ");
       expect(result.length).toBe(1);
     });
 
     test("handles lowercase input", () => {
       const original = new Uint8Array([1, 2, 3]);
       const encoded = crockfordEncode(original);
-      const decoded = crockfordDecode(encoded.toLowerCase(), 3);
+      const decoded = crockfordDecode(encoded.toLowerCase());
       expect(decoded).toEqual(original);
     });
 
     test("roundtrip encoding and decoding", () => {
       const original = new Uint8Array([255, 128, 64, 32, 16]);
       const encoded = crockfordEncode(original);
-      const decoded = crockfordDecode(encoded, 5);
+      const decoded = crockfordDecode(encoded);
       expect(decoded).toEqual(original);
-    });
-
-    test("pads output to expected length", () => {
-      const result = crockfordDecode("1", 2);
-      expect(result.length).toBe(2);
-      expect(result[0]).toBe(0);
     });
   });
 });
