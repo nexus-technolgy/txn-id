@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import { describe, expect, it } from "bun:test";
 
 import { generateTxnId, validateTxnId } from "../dist";
 
