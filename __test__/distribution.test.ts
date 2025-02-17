@@ -4,6 +4,9 @@ import { generateTxnId, validateTxnId } from "../dist";
 
 describe("Distribution Test", () => {
   const now = Date.now();
+  if (!generateTxnId || !validateTxnId) {
+    throw new Error("package has not been built");
+  }
   it("should generate a valid transaction ID", () => {
     const txnId = generateTxnId();
     const result = validateTxnId(txnId);

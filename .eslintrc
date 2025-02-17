@@ -19,6 +19,7 @@
   },
   "ignorePatterns": [
     "esbuild.mjs",
+    "__test__/distribution.test.ts",
     "/dist/**/*" // Ignore built files.
   ],
   "plugins": ["@typescript-eslint", "import", "simple-import-sort"],
